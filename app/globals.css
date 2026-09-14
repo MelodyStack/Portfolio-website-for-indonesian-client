@@ -1,0 +1,330 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. Dark is the default; [data-theme="light"] overrides.
+------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+  --bg: #05060c;
+  --bg-deep: #010104;
+  --bg-elev: #0d1019;
+  --fg: #f4f6fc;
+  --fg-muted: #aeb6cc;
+  --fg-faint: #7d8499;
+  --line: rgba(255, 255, 255, 0.13);
+  --line-strong: rgba(255, 255, 255, 0.24);
+  /* Near-opaque so panels read as surfaces, not haze over the glow. */
+  --card: rgba(14, 17, 28, 0.82);
+  --card-hover: rgba(20, 24, 38, 0.9);
+
+  --violet: #8b7bff;
+  --violet-deep: #5b3df5;
+  --cyan: #3ee0e0;
+  --cyan-deep: #0ea5b7;
+  --amber: #ffab5e;
+
+  --glow-a: rgba(109, 84, 255, 0.44);
+  --glow-b: rgba(45, 212, 212, 0.27);
+  --glow-c: rgba(255, 122, 89, 0.16);
+
+  --grain-opacity: 0.022;
+  --shadow-lift: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f6f9;
+  --bg-deep: #ffffff;
+  --bg-elev: #ffffff;
+  --fg: #080a14;
+  --fg-muted: #4a5169;
+  --fg-faint: #6b7288;
+  --line: rgba(12, 14, 26, 0.14);
+  --line-strong: rgba(12, 14, 26, 0.26);
+  --card: rgba(255, 255, 255, 0.88);
+  --card-hover: rgba(255, 255, 255, 1);
+
+  --violet: #5b3df5;
+  --violet-deep: #4326d6;
+  --cyan: #0d9aae;
+  --cyan-deep: #077487;
+  --amber: #d97528;
+
+  --glow-a: rgba(109, 84, 255, 0.2);
+  --glow-b: rgba(13, 154, 174, 0.14);
+  --glow-c: rgba(255, 122, 89, 0.1);
+
+  --grain-opacity: 0.014;
+  --shadow-lift: 0 30px 70px -40px rgba(20, 24, 60, 0.45);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-deep: var(--bg-deep);
+  --color-bg-elev: var(--bg-elev);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-faint: var(--fg-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-card: var(--card);
+  --color-violet: var(--violet);
+  --color-cyan: var(--cyan);
+  --color-amber: var(--amber);
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  /* `clip` (not `hidden`) so decorative overflow never widens the layout
+     viewport on mobile, and without turning the root into a scroll container. */
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  /* No `-webkit-font-smoothing: antialiased`, which disables subpixel rendering
+     and thins glyphs, which reads as soft/washed-out text on dark backgrounds. */
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+::selection {
+  background: var(--violet);
+  color: #fff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 99px;
+  border: 3px solid var(--bg-deep);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--violet);
+}
+
+/* Only set once <Cursor /> confirms a fine pointer and no reduced-motion pref,
+   so touch and keyboard users keep the native pointer. */
+html[data-cursor="custom"],
+html[data-cursor="custom"] *:not(input):not(textarea) {
+  cursor: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------------
+   Utilities
+------------------------------------------------------------------- */
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 78rem;
+  padding-inline: 1.25rem;
+  @media (min-width: 768px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+.text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--fg) 0%,
+    var(--fg) 28%,
+    var(--violet) 68%,
+    var(--cyan) 104%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-accent {
+  background-image: linear-gradient(100deg, var(--violet) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.glass {
+  background: var(--card);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line);
+}
+
+/* Animated gradient border on hover */
+.hairline {
+  position: relative;
+}
+.hairline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    130deg,
+    transparent 20%,
+    var(--violet) 50%,
+    var(--cyan) 70%,
+    transparent 85%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.hairline:hover::after {
+  opacity: 1;
+}
+
+/* Film grain */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Tile at its native scale. Stretching it across the layer turned fine
+     noise into large mottled blobs, which read as blur over the whole page. */
+  background-size: 180px 180px;
+  background-repeat: repeat;
+  animation: grain 8s steps(6) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4%, -3%); }
+  20% { transform: translate(-8%, 2%); }
+  30% { transform: translate(4%, -6%); }
+  40% { transform: translate(-2%, 6%); }
+  50% { transform: translate(-6%, 4%); }
+  60% { transform: translate(6%, 0%); }
+  70% { transform: translate(0%, 6%); }
+  80% { transform: translate(3%, 8%); }
+  90% { transform: translate(-6%, 3%); }
+}
+
+/* Aurora blobs */
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(6%, -8%, 0) scale(1.12); }
+  66% { transform: translate3d(-7%, 5%, 0) scale(0.94); }
+}
+
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  will-change: transform;
+  animation: drift 26s ease-in-out infinite;
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* Caret for the terminal */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: -0.15em;
+  background: var(--cyan);
+  animation: blink 1s steps(1) infinite;
+}
+
+/* Shimmering sweep for the "available" pill */
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: #34d399;
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scroll-linked conic spin used on the agent nodes */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .aurora,
+  .grain::before,
+  .animate-marquee,
+  .animate-spin-slow,
+  .pulse-ring::before {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
